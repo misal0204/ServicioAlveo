@@ -30,6 +30,5 @@ public class File_Process {
             //Logger.getLogger(File_Process.class.getName()).log(Level.SEVERE, null, ex);
             System.err.println("Insert file: "+ex.getMessage());   
         }
-
     }
 }
