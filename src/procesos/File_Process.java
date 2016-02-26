@@ -2,16 +2,10 @@ package procesos;
 
 import DBConnection.DBConnect;
 import DBOperaciones.DBCrud;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 
 public class File_Process {
 
@@ -20,15 +14,32 @@ public class File_Process {
     Statement q;
     ResultSet result;
 
-    public void FileProcessRead() {
+    public void FileSearch(String file) {
         db = new DBConnect();
         con = db.Connect();
         try {
             q = con.createStatement();
-            new DBCrud().insertValues(q, new FindTxt().ReadFile());
+            int get=new DBCrud().findFile(q, file);
+            
+            if(get==1)
+            {
+                System.out.println("Encontrado: "+file);
+            }else
+            {
+                System.out.println("No Encontrado: "+file);
+                new FindTxt().ReadFile(file);
+            }
+            
+        } catch (SQLException ex) {
+            System.err.println("Busqueda de archivo: " + ex.getMessage());
+        }
+        try {
+            con.close();
+            q.close();
         } catch (SQLException ex) {
             //Logger.getLogger(File_Process.class.getName()).log(Level.SEVERE, null, ex);
-            System.err.println("Insert file: "+ex.getMessage());   
+            System.err.println("Error en buscar archivo");
         }
     }
+
 }

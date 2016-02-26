@@ -1,10 +1,16 @@
 package procesos;
 
+import DBOperaciones.DBCrud;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.nio.file.CopyOption;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +18,7 @@ public class FindTxt {
 
     public void findFile() {
         // Aquí la carpeta que queremos explorar
-        String path = "D:\\Harisa\\Servicio txt y java\\archivos";
+        String path = "D:\\Harisa\\ServicioTxt\\archivos";
         String files;
         int count = 0;
 
@@ -34,9 +40,33 @@ public class FindTxt {
         System.out.println("Fin " + count);
     }
 
+    public void findFileForCopy(String fileName) {
+        // Aquí la carpeta que queremos explorar
+        String path = "D:\\Harisa\\ServicioTxt\\archivos";
+        String files;
+
+        File folder = new File(path);
+        File[] listOfFiles = folder.listFiles();
+
+        for (File listOfFile : listOfFiles) {
+            if (listOfFile.isFile()) {
+                files = listOfFile.getName();
+                int c = files.indexOf(".");
+                String newFile = files.substring(0, c);
+
+                if (newFile.equals(fileName)) {
+
+                    System.out.println(files);
+                    copyFiles(files);
+
+                }
+            }
+        }
+    }
+
     public List getFilePath() {
         // Aquí la carpeta que queremos explorar
-        String path = "D:\\Harisa\\Servicio txt y java\\archivos";
+        String path = "D:\\Harisa\\ServicioTxt\\archivos";
         String files;
 
         int count = 0;
@@ -60,13 +90,15 @@ public class FindTxt {
         return listaArchivos;
     }
 
-    public List ReadFile() {
+    public List ReadFile(String archivo) {
         String[] getCampos = {"NOMBRE", "MUESTRA", "P" + '\t', "L", "G" + '\t', "W" + '\t', "P/L" + '\t'};
         List getResult = new ArrayList<>();
+        //String PATH="D:\\Harisa\\Servicio txt y java\\archivos\\09110000.AHC";
+        String PATH = "D:\\Harisa\\ServicioTxt\\archivos\\" + archivo + ".AHC";
 
         int e = 0;
         try {
-            FileInputStream fstream = new FileInputStream("D:\\Harisa\\Servicio txt y java\\archivos\\10060001.AHC");
+            FileInputStream fstream = new FileInputStream(PATH);
             try (DataInputStream entrada = new DataInputStream(fstream)) {
                 BufferedReader buffer = new BufferedReader(new InputStreamReader(entrada));
                 String strLinea;
@@ -118,13 +150,11 @@ public class FindTxt {
                                     getL += newL.charAt(c);
                                     c++;
                                 }
-                                System.out.println("L: " + getL.trim());
                                 getResult.add(getL.trim());
                                 break;
                             case 4:
                                 index = strLinea.indexOf('\t');
                                 String getG = strLinea.substring(index + 1).trim();
-                                System.out.println("G: " + getG.trim());
                                 getResult.add(getG.trim());
                                 break;
                             case 5:
@@ -151,12 +181,65 @@ public class FindTxt {
                         }
                     }
                 }
-                //System.out.println("lineas: " + count);
+                new DBCrud().insertValues(getResult);
+                findFileForCopy(archivo);
+
             }
         } catch (Exception ex) {
-            System.err.println("Ocurrio un error: " + ex.getMessage() + ": " + ex.getLocalizedMessage());
+            System.err.println("Ocurrio un error ReadFile: " + ex.getMessage() + ": " + ex.getLocalizedMessage());
         }
 
         return getResult;
     }
+
+    public void ProcessFile() {
+        List files = getFilePath();
+
+        for (int i = 0; i < files.size(); i++) {
+
+            new File_Process().FileSearch(String.valueOf(files.get(i)));
+        }
+    }
+
+    public void copyFiles(String fileName) {
+
+        String nfile = fileName;
+        String PATH_IN = "D:/Harisa/ServicioTxt/archivos/";
+        String PATH_OUT = "D:/Harisa/ServicioTxt/historial/";
+        PATH_IN += nfile;
+        PATH_OUT += nfile;
+
+        boolean alreadyExists = new File(PATH_OUT).exists();
+
+        Path FROM = Paths.get(PATH_IN);
+        Path TO = Paths.get(PATH_OUT);
+
+        CopyOption[] options = new CopyOption[]{
+            StandardCopyOption.REPLACE_EXISTING,
+            StandardCopyOption.COPY_ATTRIBUTES
+        };
+
+        if (alreadyExists) {
+            try {
+
+                Files.deleteIfExists(TO);
+                Files.copy(FROM, TO, options);
+            } catch (Exception e) {
+                System.err.println("Error en copia de registro");
+            } catch (NoClassDefFoundError e) {
+                System.err.println("Error en clases file_process copy: " + e.getMessage());
+            }
+
+        } else {
+            try {
+
+                Files.copy(FROM, TO, options);
+            } catch (Exception e) {
+                System.err.println("Error en creacion de registro" + e.getMessage());
+            } catch (NoClassDefFoundError e) {
+                System.err.println("Error en clases file_process create: " + e.getMessage());
+            }
+        }
+    }
+
 }
