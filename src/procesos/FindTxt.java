@@ -5,6 +5,8 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FindTxt {
 
@@ -20,8 +22,11 @@ public class FindTxt {
         for (File listOfFile : listOfFiles) {
             if (listOfFile.isFile()) {
                 files = listOfFile.getName();
-                if (files.endsWith(".txt") || files.endsWith(".AHC")) {
-                    System.out.println(files);
+                if (files.endsWith(".AHC")) {
+                    //System.out.println(files);
+                    int c = files.indexOf(".");
+                    String newFile = files.substring(0, c);
+                    System.out.println(newFile);
                     count++;
                 }
             }
@@ -29,9 +34,36 @@ public class FindTxt {
         System.out.println("Fin " + count);
     }
 
-    public String[] ReadFile() {
+    public List getFilePath() {
+        // Aquí la carpeta que queremos explorar
+        String path = "D:\\Harisa\\Servicio txt y java\\archivos";
+        String files;
+
+        int count = 0;
+        List listaArchivos = new ArrayList<>();
+
+        File folder = new File(path);
+        File[] listOfFiles = folder.listFiles();
+
+        for (File listOfFile : listOfFiles) {
+            if (listOfFile.isFile()) {
+                files = listOfFile.getName();
+                if (files.endsWith(".AHC")) {
+                    int c = files.indexOf(".");
+                    String newFile = files.substring(0, c);
+
+                    listaArchivos.add(newFile);
+                    count++;
+                }
+            }
+        }
+        return listaArchivos;
+    }
+
+    public List ReadFile() {
         String[] getCampos = {"NOMBRE", "MUESTRA", "P" + '\t', "L", "G" + '\t', "W" + '\t', "P/L" + '\t'};
-        String[] getResult = new String[7];
+        List getResult = new ArrayList<>();
+
         int e = 0;
         try {
             FileInputStream fstream = new FileInputStream("D:\\Harisa\\Servicio txt y java\\archivos\\10060001.AHC");
@@ -50,25 +82,32 @@ public class FindTxt {
                         switch (count) {
                             case 0:
                                 index = strLinea.indexOf(':');
-                                System.out.println(strLinea.substring(index + 1).trim());
-                                getResult[count] = strLinea.substring(index + 1).trim();
+
+                                String parcialString = strLinea.substring(index + 1).trim();
+                                int p = parcialString.indexOf(".");
+
+                                String newFile = parcialString.substring(0, p);
+
+                                getResult.add(newFile);
+
                                 break;
                             case 1:
                                 index = strLinea.indexOf('\t');
-                                System.out.println(strLinea.substring(index + 1).trim());
-                                getResult[count] = strLinea.substring(index + 1).trim();
+                                String muestra = strLinea.substring(index + 1).trim();
+                                getResult.add(muestra);
                                 break;
                             case 2:
                                 index = strLinea.indexOf('\t');
                                 String newP = strLinea.substring(index + 1).trim();
                                 String getP = "";
                                 c = 0;
+
                                 while (newP.charAt(c) != '\t') {
                                     getP += newP.charAt(c);
                                     c++;
                                 }
-                                System.out.println("P: " + getP.trim());
-                                getResult[count] = getP.trim();
+
+                                getResult.add(getP.trim());
                                 break;
                             case 3:
                                 index = strLinea.indexOf('\t');
@@ -80,13 +119,13 @@ public class FindTxt {
                                     c++;
                                 }
                                 System.out.println("L: " + getL.trim());
-                                getResult[count] = getL.trim();
+                                getResult.add(getL.trim());
                                 break;
                             case 4:
                                 index = strLinea.indexOf('\t');
                                 String getG = strLinea.substring(index + 1).trim();
                                 System.out.println("G: " + getG.trim());
-                                getResult[count] = getG.trim();
+                                getResult.add(getG.trim());
                                 break;
                             case 5:
                                 index = strLinea.indexOf('\t');
@@ -97,14 +136,12 @@ public class FindTxt {
                                     getW += newW.charAt(c);
                                     c++;
                                 }
-                                System.out.println("W: " + getW.trim());
-                                getResult[count] = getW.trim();
+                                getResult.add(getW.trim());
                                 break;
                             case 6:
                                 index = strLinea.indexOf('\t');
                                 String getPL = strLinea.substring(index + 1).trim();
-                                System.out.println("PL: " + getPL.trim());
-                                getResult[count] = getPL.trim();
+                                getResult.add(getPL.trim());
                                 break;
                         }
                         count++;
@@ -115,14 +152,9 @@ public class FindTxt {
                     }
                 }
                 //System.out.println("lineas: " + count);
-
             }
         } catch (Exception ex) {
             System.err.println("Ocurrio un error: " + ex.getMessage() + ": " + ex.getLocalizedMessage());
-        }
-
-        for (String result : getResult) {
-            System.out.print(result + " - ");
         }
 
         return getResult;

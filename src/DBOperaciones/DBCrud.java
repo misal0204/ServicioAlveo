@@ -20,7 +20,6 @@ public class DBCrud {
                     + "VALUES('SV','M201','" + values[1] + "','" + values[0] + "','" + values[2] + "','" + values[3] + "'"
                     + ",'" + values[4] + "','" + values[5] + "','" + values[6] + "')");
         } catch (SQLException ex) {
-
             System.out.println("Error en insertar lote de inspección: " + ex.getMessage());
         }
     }
