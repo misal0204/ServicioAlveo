@@ -1,11 +1,12 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Clase encargada de realizar las operaciones de 
+ * Creación, lectura, actualizar y eliminar en la base de datos
+ * 
  */
 package DBOperaciones;
 
 import DBConnection.DBConnect;
+import Log.LogEvent;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,15 +16,18 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DBCrud {
+    
+    DBConnect db; // Instancia de la clase DBConnect
+    Connection con; // variable para realizar conexión
+    Statement q; // variable para manejo de sentencias sql
+    ResultSet result; // variable para resultados sql
 
-    DBConnect db;
-    Connection con;
-    Statement q;
-    ResultSet result;
-
+    /* Método dedica a la inserción de valores de 
+     capturas de los archivos de alveo.
+     */
     public void insertValues(List values) {
-        db = new DBConnect();
-        con = db.Connect();
+        db = new DBConnect(); //Se asigna una instancia de conexión de base de datos
+        con = db.Connect(); //apertura de conexión
 
         try {
             q = con.createStatement();
@@ -32,7 +36,9 @@ public class DBCrud {
                     + "VALUES('SV','M201','" + values.get(1) + "','" + values.get(0) + "',"
                     + "'" + values.get(2) + "','" + values.get(3) + "'"
                     + ",'" + values.get(4) + "','" + values.get(5) + "','" + values.get(6) + "')");
+            new LogEvent().LogAlveo("Realizado con éxito");
         } catch (SQLException ex) {
+            new LogEvent().LogAlveo("Error en insertar muestra");
             System.out.println("Error en insertar Alveo: " + ex.getMessage());
         }
         
@@ -44,14 +50,17 @@ public class DBCrud {
         }
     }
 
-    public int findFile(Statement query, String file) {
+    /*
+     Busqueda de archivos de de alveo
+     */
+    public boolean findFile(Statement query, String file) {
         ResultSet result;
         String q = "SELECT * FROM SM_ALVEO WHERE FALVEO='" + file + "'";
-        int ok = 0;
+        boolean ok = false;
         try {
             result = query.executeQuery(q);
             while (result.next()) {
-                ok = 1;
+                ok = true;
             }
         } catch (SQLException ex) {
             Logger.getLogger(DBCrud.class.getName()).log(Level.SEVERE, null, ex);

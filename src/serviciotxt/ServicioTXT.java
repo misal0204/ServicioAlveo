@@ -1,7 +1,5 @@
 package serviciotxt;
 
-import java.util.List;
-import procesos.File_Process;
 import procesos.FindTxt;
 
 public class ServicioTXT {

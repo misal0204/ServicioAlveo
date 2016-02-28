@@ -1,6 +1,7 @@
 package procesos;
 
 import DBOperaciones.DBCrud;
+import Log.LogEvent;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
@@ -18,7 +19,7 @@ public class FindTxt {
 
     public void findFile() {
         // Aquí la carpeta que queremos explorar
-        String path = "D:\\Harisa\\ServicioTxt\\archivos";
+        String path = "D:/Harisa/ServicioTxt/archivos";
         String files;
         int count = 0;
 
@@ -29,7 +30,6 @@ public class FindTxt {
             if (listOfFile.isFile()) {
                 files = listOfFile.getName();
                 if (files.endsWith(".AHC")) {
-                    //System.out.println(files);
                     int c = files.indexOf(".");
                     String newFile = files.substring(0, c);
                     System.out.println(newFile);
@@ -42,7 +42,7 @@ public class FindTxt {
 
     public void findFileForCopy(String fileName) {
         // Aquí la carpeta que queremos explorar
-        String path = "D:\\Harisa\\ServicioTxt\\archivos";
+        String path = "D:/Harisa/ServicioTxt/archivos";
         String files;
 
         File folder = new File(path);
@@ -66,7 +66,7 @@ public class FindTxt {
 
     public List getFilePath() {
         // Aquí la carpeta que queremos explorar
-        String path = "D:\\Harisa\\ServicioTxt\\archivos";
+        String path = "D:/Harisa/ServicioTxt/archivos";
         String files;
 
         int count = 0;
@@ -93,8 +93,7 @@ public class FindTxt {
     public List ReadFile(String archivo) {
         String[] getCampos = {"NOMBRE", "MUESTRA", "P" + '\t', "L", "G" + '\t', "W" + '\t', "P/L" + '\t'};
         List getResult = new ArrayList<>();
-        //String PATH="D:\\Harisa\\Servicio txt y java\\archivos\\09110000.AHC";
-        String PATH = "D:\\Harisa\\ServicioTxt\\archivos\\" + archivo + ".AHC";
+        String PATH = "D:/Harisa/ServicioTxt/archivos" + "/" + archivo + ".AHC";
 
         int e = 0;
         try {
@@ -105,43 +104,40 @@ public class FindTxt {
                 int count = 0;
                 int index = 0;
                 int c = 0;
+
                 while ((strLinea = buffer.readLine()) != null) {
-
                     e = strLinea.indexOf(getCampos[count]);
-
                     if (e != -1) {
-                        //System.out.println(strLinea);
                         switch (count) {
                             case 0:
+                                new LogEvent().LogAlveo("Resultados");
+                                new LogEvent().LogAlveo(strLinea);
                                 index = strLinea.indexOf(':');
-
                                 String parcialString = strLinea.substring(index + 1).trim();
                                 int p = parcialString.indexOf(".");
-
                                 String newFile = parcialString.substring(0, p);
-
                                 getResult.add(newFile);
-
                                 break;
                             case 1:
+                                new LogEvent().LogAlveo(strLinea);
                                 index = strLinea.indexOf('\t');
                                 String muestra = strLinea.substring(index + 1).trim();
                                 getResult.add(muestra);
                                 break;
                             case 2:
+                                new LogEvent().LogAlveo(strLinea);
                                 index = strLinea.indexOf('\t');
                                 String newP = strLinea.substring(index + 1).trim();
                                 String getP = "";
                                 c = 0;
-
                                 while (newP.charAt(c) != '\t') {
                                     getP += newP.charAt(c);
                                     c++;
                                 }
-
                                 getResult.add(getP.trim());
                                 break;
                             case 3:
+                                new LogEvent().LogAlveo(strLinea);
                                 index = strLinea.indexOf('\t');
                                 String newL = strLinea.substring(index + 1).trim();
                                 String getL = "";
@@ -153,11 +149,13 @@ public class FindTxt {
                                 getResult.add(getL.trim());
                                 break;
                             case 4:
+                                new LogEvent().LogAlveo(strLinea);
                                 index = strLinea.indexOf('\t');
                                 String getG = strLinea.substring(index + 1).trim();
                                 getResult.add(getG.trim());
                                 break;
                             case 5:
+                                new LogEvent().LogAlveo(strLinea);
                                 index = strLinea.indexOf('\t');
                                 String newW = strLinea.substring(index + 1).trim();
                                 String getW = "";
@@ -169,6 +167,7 @@ public class FindTxt {
                                 getResult.add(getW.trim());
                                 break;
                             case 6:
+                                new LogEvent().LogAlveo(strLinea);
                                 index = strLinea.indexOf('\t');
                                 String getPL = strLinea.substring(index + 1).trim();
                                 getResult.add(getPL.trim());
@@ -181,11 +180,13 @@ public class FindTxt {
                         }
                     }
                 }
+                new LogEvent().LogAlveo("Insertando resultados");
                 new DBCrud().insertValues(getResult);
                 findFileForCopy(archivo);
 
             }
         } catch (Exception ex) {
+            new LogEvent().LogAlveo("Error en ReadFile: " + ex.getMessage());
             System.err.println("Ocurrio un error ReadFile: " + ex.getMessage() + ": " + ex.getLocalizedMessage());
         }
 
@@ -196,7 +197,6 @@ public class FindTxt {
         List files = getFilePath();
 
         for (int i = 0; i < files.size(); i++) {
-
             new File_Process().FileSearch(String.valueOf(files.get(i)));
         }
     }
@@ -229,14 +229,18 @@ public class FindTxt {
             } catch (NoClassDefFoundError e) {
                 System.err.println("Error en clases file_process copy: " + e.getMessage());
             }
-
         } else {
             try {
 
                 Files.copy(FROM, TO, options);
+                new LogEvent().LogAlveo("Copia de archivo: " + fileName);
+                new LogEvent().LogAlveo("Fin de operación");
+                new LogEvent().LogAlveo("--------------**************--------------");
             } catch (Exception e) {
+                new LogEvent().LogAlveo("Error en creación de documento: " + e.getMessage());
                 System.err.println("Error en creacion de registro" + e.getMessage());
             } catch (NoClassDefFoundError e) {
+                new LogEvent().LogAlveo("Error en clases file_process create: " + e.getMessage());
                 System.err.println("Error en clases file_process create: " + e.getMessage());
             }
         }
