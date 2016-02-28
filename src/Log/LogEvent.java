@@ -5,12 +5,18 @@
  */
 package Log;
 
+import DBConnection.DBConnect;
+import DBOperaciones.DBCrud;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import procesos.GetParameters;
 
 /**
  *
@@ -18,7 +24,8 @@ import java.util.Date;
  */
 public class LogEvent {
 
-    String PATH = "D:/Harisa/ServicioTxt/log";
+    //String PATH = new DBCrud().findPath(null, "P_PATH_ALVEO_LOG", "SV");
+    String PATH=new GetParameters().getPath("P_PATH_ALVEO_LOG"); 
     String ruta = PATH;
     /*
      formatos de de hora y fechas.
@@ -29,7 +36,7 @@ public class LogEvent {
     SimpleDateFormat fecha_file = new SimpleDateFormat("ddMMyyyy");
     String fecha = formateador.format(ahora);
     String hora = hourFormat.format(ahora);
-    String f_a = fecha_file.format(ahora); // f_f =fecha alveo
+    String f_a = fecha_file.format(ahora); // f_a =fecha alveo
 
     String file_log = "log_" + f_a + "_alveo.txt";
 
@@ -39,9 +46,9 @@ public class LogEvent {
     String inicio = hora;
 
     public void LogAlveo(String mensaje) {
-        
-        ruta= ruta+"/"+file_log;
-        
+
+        ruta = ruta + "/" + file_log;
+
         File file = new File(ruta);
         BufferedWriter bw;
         try {

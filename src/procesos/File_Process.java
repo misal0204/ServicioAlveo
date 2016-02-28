@@ -22,18 +22,9 @@ public class File_Process {
             q = con.createStatement();
             boolean get = new DBCrud().findFile(q, file);
 
-            /*if (get) {
-             System.out.println("Encontrado: " + file);
-             } else {
-             System.out.println("No Encontrado: " + file);
-             new FindTxt().ReadFile(file);
-             }*/
-            
-            
             if (!get) {
-                //System.out.println("No Encontrado: " + file);
-                System.out.println("Busqueda de datos en: "+file);
-                new LogEvent().LogAlveo("Archivo a leer: "+file);
+                System.out.println("Busqueda de datos en: " + file);
+                new LogEvent().LogAlveo("Archivo a leer: " + file);
                 new FindTxt().ReadFile(file);
             }
 

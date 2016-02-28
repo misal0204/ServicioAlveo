@@ -16,7 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DBCrud {
-    
+
     DBConnect db; // Instancia de la clase DBConnect
     Connection con; // variable para realizar conexión
     Statement q; // variable para manejo de sentencias sql
@@ -41,7 +41,7 @@ public class DBCrud {
             new LogEvent().LogAlveo("Error en insertar muestra");
             System.out.println("Error en insertar Alveo: " + ex.getMessage());
         }
-        
+
         try {
             con.close();
             q.close();
@@ -54,11 +54,10 @@ public class DBCrud {
      Busqueda de archivos de de alveo
      */
     public boolean findFile(Statement query, String file) {
-        ResultSet result;
-        String q = "SELECT * FROM SM_ALVEO WHERE FALVEO='" + file + "'";
+        String sql = "SELECT * FROM SM_ALVEO WHERE FALVEO='" + file + "'";
         boolean ok = false;
         try {
-            result = query.executeQuery(q);
+            result = query.executeQuery(sql);
             while (result.next()) {
                 ok = true;
             }
@@ -66,5 +65,19 @@ public class DBCrud {
             Logger.getLogger(DBCrud.class.getName()).log(Level.SEVERE, null, ex);
         }
         return ok;
+    }
+
+    public String findPath(Statement query, String param,String pais) {
+        String sql = "SELECT * FROM DT_PARAMETERS WHERE PARAMETER='" + param + "' AND IDPAIS='"+pais+"'";
+        String value = "";
+        try {
+            result = query.executeQuery(sql);
+            while (result.next()) {
+                value = result.getString("VALUE");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCrud.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return value;
     }
 }

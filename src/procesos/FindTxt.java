@@ -17,9 +17,12 @@ import java.util.List;
 
 public class FindTxt {
 
+    String PATH = new GetParameters().getPath("P_PATH_ALVEO");
+    String PATH_H = new GetParameters().getPath("P_PATH_ALVEO_OUT");
+
     public void findFile() {
         // Aquí la carpeta que queremos explorar
-        String path = "D:/Harisa/ServicioTxt/archivos";
+        String path = PATH;
         String files;
         int count = 0;
 
@@ -42,7 +45,7 @@ public class FindTxt {
 
     public void findFileForCopy(String fileName) {
         // Aquí la carpeta que queremos explorar
-        String path = "D:/Harisa/ServicioTxt/archivos";
+        String path = PATH;
         String files;
 
         File folder = new File(path);
@@ -66,7 +69,7 @@ public class FindTxt {
 
     public List getFilePath() {
         // Aquí la carpeta que queremos explorar
-        String path = "D:/Harisa/ServicioTxt/archivos";
+        String path = PATH;
         String files;
 
         int count = 0;
@@ -93,11 +96,11 @@ public class FindTxt {
     public List ReadFile(String archivo) {
         String[] getCampos = {"NOMBRE", "MUESTRA", "P" + '\t', "L", "G" + '\t', "W" + '\t', "P/L" + '\t'};
         List getResult = new ArrayList<>();
-        String PATH = "D:/Harisa/ServicioTxt/archivos" + "/" + archivo + ".AHC";
+        String path = PATH + "/" + archivo + ".AHC";
 
         int e = 0;
         try {
-            FileInputStream fstream = new FileInputStream(PATH);
+            FileInputStream fstream = new FileInputStream(path);
             try (DataInputStream entrada = new DataInputStream(fstream)) {
                 BufferedReader buffer = new BufferedReader(new InputStreamReader(entrada));
                 String strLinea;
@@ -204,8 +207,8 @@ public class FindTxt {
     public void copyFiles(String fileName) {
 
         String nfile = fileName;
-        String PATH_IN = "D:/Harisa/ServicioTxt/archivos/";
-        String PATH_OUT = "D:/Harisa/ServicioTxt/historial/";
+        String PATH_IN = PATH + "/";
+        String PATH_OUT = PATH_H;
         PATH_IN += nfile;
         PATH_OUT += nfile;
 
