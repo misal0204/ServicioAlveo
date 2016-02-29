@@ -5,14 +5,9 @@
  */
 package Log;
 
-import DBConnection.DBConnect;
-import DBOperaciones.DBCrud;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
