@@ -10,9 +10,12 @@ public class ServicioTXT {
         /*FindTxt ftxt = new FindTxt();
         ftxt.findFile();*/
         //ftxt.ProcessFile();
+        
+        //TimerTask Para lectura de datos
         LecturaDatos ld=new LecturaDatos();
         ld.ServicioRead();        
         
+        //Timertaks para copia de archivos
         CopiaDatos cd=new CopiaDatos();
         cd.ServicioCopy();
     }
